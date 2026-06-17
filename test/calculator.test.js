@@ -1,4 +1,4 @@
-const { calculateExpression, normalizeExpression } = global;
+const { calculateExpression, normalizeExpression, roundToSigFigs } = global;
 
 // Normalize expression tests
 describe("normalizeExpression", () => {
@@ -116,5 +116,45 @@ describe("calculateExpression", () => {
   test("evaluates expression with e", () => {
     const result = calculateExpression("e");
     expect(result).toBe(Math.E);
+  });
+});
+
+// Round to significant figures tests
+describe("roundToSigFigs", () => {
+  test("returns 0 for 0", () => {
+    expect(roundToSigFigs(0, 3)).toBe(0);
+  });
+
+  test("returns same number when sigFigs not provided", () => {
+    expect(roundToSigFigs(123.456)).toBe(123.456);
+  });
+
+  test("returns same number when sigFigs < 1", () => {
+    expect(roundToSigFigs(123.456, 0)).toBe(123.456);
+  });
+
+  test("rounds to 3 significant figures", () => {
+    expect(roundToSigFigs(123.456, 3)).toBe(123);
+  });
+
+  test("rounds to 4 significant figures", () => {
+    expect(roundToSigFigs(123.456, 4)).toBe(123.5);
+  });
+
+  test("rounds to 2 significant figures", () => {
+    expect(roundToSigFigs(0.00123456, 2)).toBe(0.0012);
+  });
+
+  test("rounds to 3 significant figures for small decimal", () => {
+    expect(roundToSigFigs(0.00123456, 3)).toBe(0.00123);
+  });
+
+  test("rounds large number to 2 significant figures", () => {
+    const result = roundToSigFigs(98765, 2);
+    expect(result).toBe(99000);
+  });
+
+  test("rounds to 1 significant figure", () => {
+    expect(roundToSigFigs(456, 1)).toBe(500);
   });
 });

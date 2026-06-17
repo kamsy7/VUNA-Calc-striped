@@ -140,6 +140,15 @@ function percentToResult() {
 // ------------------------------
 // Calculate Result
 // ------------------------------
+function roundToSigFigs(num, sigFigs) {
+  if (num === 0) return 0;
+  if (!sigFigs || sigFigs < 1) return num;
+  const d = Math.ceil(Math.log10(Math.abs(num)));
+  const power = sigFigs - d;
+  const magnitude = Math.pow(10, power);
+  return Math.round(num * magnitude) / magnitude;
+}
+
 function calculateExpression(expression) {
   try {
    
@@ -167,8 +176,17 @@ function calculateExpression(expression) {
 function calculateResult() {
   if (!currentExpression) return;
     const display = document.getElementById("result"); 
+    const sigFigsInput = document.getElementById("sigfigs"); 
     // Calculate result
     let result = calculateExpression(currentExpression);
+
+    if (result !== "Error" && sigFigsInput && sigFigsInput.value) {
+      const sf = parseInt(sigFigsInput.value, 10);
+      if (sf >= 1) {
+        result = roundToSigFigs(result, sf);
+      }
+    }
+
     result = String(result);
 
     // Save result for future expressions
